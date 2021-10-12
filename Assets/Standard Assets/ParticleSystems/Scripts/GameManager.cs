@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     public float timeLeft;
     public int timeRemining;
 
+    
     public Text ScoreText;
     public Text TimerText;
 
@@ -40,19 +41,20 @@ public class GameManager : MonoBehaviour
             {
                 SceneManager.LoadScene("WinScene");
             }
+
+            else if (timeLeft <= 0)
+            {
+                SceneManager.LoadScene("LoseScene");
+
+            }
+
         }
 
-        else if(timeLeft <= 0)
-        {
-            SceneManager.LoadScene("LoseScene");
-
-        }
+       
 
     }
 
+    
 
 
-
-
-
-}
+    }
