@@ -7,54 +7,90 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-
+    
     private float scoreValue;
     private float totalCoins;
     public float timeLeft;
     public int timeRemining;
-
     
     public Text ScoreText;
     public Text TimerText;
 
     private float TimerValue;
 
+    private AudioSource audioSource;
+    public AudioClip collectSound;
+
+    public bool pause;
+    public GameObject panel;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        if (instance == null)
+        {
+            instance = this;
+        }
 
+        totalCoins = 6;
+
+        audioSource = GetComponent<AudioSource>();
+
+        pause = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        timeLeft -= Time.deltaTime;
+        if (Input.GetKey(KeyCode.P))
+        {
+            pause = true;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
 
-        timeRemining = Mathf.FloorToInt(timeLeft % 60);
+        if (pause == true)
+        {
 
-        TimerText.text = "Timer: " + timeRemining.ToString();
+            panel.SetActive(true);
+
+        }
+        else
+        {
+            panel.SetActive(false);
+            timeLeft -= Time.deltaTime;
+            timeRemining = Mathf.FloorToInt(timeLeft % 60);
+            TimerText.text = "Timer: " + timeRemining.ToString();
+        }
 
         if(scoreValue == totalCoins)
+        {          
+          SceneManager.LoadScene("WinScene");
+            
+        }
+
+        else if (timeLeft <= 0)
         {
-            if(timeLeft <= TimerValue)
-            {
-                SceneManager.LoadScene("WinScene");
-            }
-
-            else if (timeLeft <= 0)
-            {
-                SceneManager.LoadScene("LoseScene");
-
-            }
+            SceneManager.LoadScene("LoseScene");
 
         }
 
-       
-
     }
 
-    
+    public void addScore()
+    {
+        audioSource.PlayOneShot(collectSound);
+        scoreValue++;
+        ScoreText.GetComponent<Text>().text = "Score: " + scoreValue;
+        
+    }
+
+    public void ResumeButton()
+    {
+        pause = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
 
 
     }
